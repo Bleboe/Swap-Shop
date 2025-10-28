@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabbed Website</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul>
+      <li><a class="tablink active" onclick="openTab(event, 'Browse Items')">Browse Items</a></li>
+      <li><a class="tablink" onclick="openTab(event, 'List Items')">List Items</a></li>
+      <li><a class="tablink" onclick="openTab(event, 'services')">Services</a></li>
+      <!-- <li><a class="tablink" onclick="openTab(event, 'contact')">Contact</a></li> -->
+    </ul>
+  </nav>
+
+  <!-- Page Content Sections -->
+  <div id="Browse Items" class="tabcontent" style="display: block;">
+    <h1>Welcome to My Website</h1>
+    <p>This is the Browse Items page. Use the tabs above to explore other sections.</p>
+  </div>
+
+  <div id="List Items" class="tabcontent">
+    <h1>List Items</h1>
+    <p>This is the List Items page.</p>
+  </div>
+
+  <div id="services" class="tabcontent">
+    <h1>Our Services</h1>
+    <p>A swap shop is a community initiative where individuals donate unwanted items for free.</p>
+  </div>
+
+  <div id="contact" class="tabcontent">
+    <h1>Contact Us</h1>
+    <p>Reach out at <a href="mailto:info@example.com">info@example.com</a>.</p>
+  </div>
+
+  <!-- Link to JavaScript file -->
+  <script src="script.js"></script>
+</body>
+
+</html>
