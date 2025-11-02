@@ -1,5 +1,5 @@
 // DEVELOPMENT MODE FLAG
-const DEV_MODE = false; // set to true if you want to skip login
+const DEV_MODE = true; // set to true if you want to skip login
 
 // front-end "database"
 const users = [
@@ -47,7 +47,7 @@ function openTab(evt, tabName) {
 // Logout Function
 function logout() {
   localStorage.removeItem("loggedInUser");
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 // Protect main.html + Role-based display
@@ -55,7 +55,7 @@ if (window.location.pathname.endsWith("main.html")) {
   const userData = localStorage.getItem("loggedInUser");
 
   if (!userData && !DEV_MODE) {
-    window.location.href = "login.html"; // not logged in
+    window.location.href = "index.html"; // not logged in
   } else {
     const user = userData ? JSON.parse(userData) : users[0]; // default admin in dev mode
 
