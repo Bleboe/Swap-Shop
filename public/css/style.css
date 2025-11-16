@@ -1,0 +1,401 @@
+
+
+/* --------------------------------------------------
+   RESET & BASE
+   -------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #f8faf5;
+  color: #1a1a1a;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------
+   LAYOUT
+   -------------------------------------------------- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* --------------------------------------------------
+   HEADER (Purple)
+   -------------------------------------------------- */
+.logo-img {
+  width: 50px;
+  height: 50px;
+  margin-right: 0.1rem;
+  border-radius: 6px;
+  object-fit: contain;
+  background: white;
+  padding: 1px;
+}
+
+header {
+  background: #6a1b9a !important;
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Logo */
+.logo a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: white;
+  transition: opacity 0.2s;
+}
+
+.logo a:hover {
+  opacity: 0.9;
+}
+
+.logo svg {
+  width: 32px;
+  height: 32px;
+  stroke: currentColor;
+}
+
+/* Search Bar */
+.search-bar {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* Navigation */
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 1.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+nav a:hover,
+nav a.active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* --------------------------------------------------
+   PROFILE MENU (Icon + Dropdown)
+   -------------------------------------------------- */
+.profile-menu {
+  position: relative;
+  margin-left: 1.5rem;
+  cursor: pointer;
+}
+
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.profile-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  overflow: hidden;
+  display: none;
+  z-index: 1000;
+}
+
+.dropdown a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.dropdown a:hover {
+  background: #f5f5f5;
+}
+
+.profile-menu:hover .dropdown,
+.profile-menu.active .dropdown {
+  display: block;
+}
+
+/* --------------------------------------------------
+   ITEM CARDS
+   -------------------------------------------------- */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+.item-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.item-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.item-info {
+  padding: 1rem;
+}
+
+.item-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+}
+
+/* Status Badges */
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status.available  { background: #e6f7e6; color: #1a5d1a; }
+.status.reserved   { background: #fff4e6; color: #e67e22; }
+.status.taken      { background: #f5f5f5; color: #777; }
+
+/* --------------------------------------------------
+   BUTTONS
+   -------------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-primary   { background: #6a1b9a; color: white; }
+.btn-primary:hover { background: #4a148c; }
+
+.btn-success   { background: #27ae60; color: white; }
+.btn-success:hover { background: #1e8449; }
+
+.btn-warning   { background: #ffd700; color: #1a1a1a; }
+.btn-warning:hover { background: #e6c200; }
+
+.btn-secondary { background: #666; color: white; }
+.btn-secondary:hover { background: #555; }
+
+/* --------------------------------------------------
+   FORMS
+   -------------------------------------------------- */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #6a1b9a;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* --------------------------------------------------
+   LOGIN PAGE
+   -------------------------------------------------- */
+.login-container {
+  max-width: 400px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.login-container h1 {
+  margin-bottom: 1.5rem;
+  color: #6a1b9a;
+  font-size: 1.8rem;
+}
+
+/* --------------------------------------------------
+   MY ITEMS PAGE – 2 COLUMNS
+   -------------------------------------------------- */
+.myitems-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.column h3 {
+  margin-bottom: 1rem;
+  color: #6a1b9a;
+  border-bottom: 2px solid #6a1b9a;
+  padding-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.empty-state {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* --------------------------------------------------
+   ITEM DETAILS – PHOTO GALLERY
+   -------------------------------------------------- */
+.photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.detail-photo {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.detail-photo:hover {
+  transform: scale(1.02);
+}
+
+/* --------------------------------------------------
+   RESPONSIVE DESIGN
+   -------------------------------------------------- */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .search-bar {
+    order: 3;
+    margin: 1rem 0 0;
+    width: 100%;
+  }
+
+  nav {
+    order: 2;
+    margin: 0.5rem 0;
+  }
+
+  .profile-menu {
+    margin-left: 0;
+  }
+
+  .myitems-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .items-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .login-container {
+    margin: 2rem auto;
+    padding: 1.5rem;
+  }
+}

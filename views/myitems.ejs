@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Items | Swap Shop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+  <div class="container" style="margin:1rem 0;">
+    <a href="/dashboard?user=<%= user.email %>" class="btn btn-secondary">
+      ← Back to Dashboard
+    </a>
+  </div>
+  <div class="container">
+    <h2 style="margin:2rem 0 1rem;">My Activity</h2>
+
+    <div class="myitems-grid">
+      <!-- DONATED ITEMS -->
+      <div class="column">
+        <h3>My Donations</h3>
+        <% if (donated.length === 0) { %>
+          <p class="empty-state">You haven't donated anything yet.<br>
+            <a href="/donate?user=<%= user.email %>">Donate now</a>
+          </p>
+        <% } else { %>
+          <div class="items-grid">
+            <% donated.forEach(item => { %>
+              <div class="item-card" onclick="location.href='/item/<%= item.ID %>?user=<%= user.email %>'">
+                <img src="/uploads/<%= item.ImageFolder %>/<%= item.Images.split(',')[0] %>"
+                     alt="<%= item.Title %>"
+                     style="width:100%;height:180px;object-fit:cover;">
+                <div class="item-info">
+                  <h3><%= item.Title %></h3>
+                  <span class="status <%= item.Status.toLowerCase() %>"><%= item.Status %></span>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- RESERVED ITEMS -->
+      <div class="column">
+        <h3>Items I Reserved</h3>
+        <% if (reserved.length === 0) { %>
+          <p class="empty-state">You haven't reserved any items yet.</p>
+        <% } else { %>
+          <div class="items-grid">
+            <% reserved.forEach(item => { %>
+              <div class="item-card" onclick="location.href='/item/<%= item.ID %>?user=<%= user.email %>'">
+                <img src="/uploads/<%= item.ImageFolder %>/<%= item.Images.split(',')[0] %>"
+                     alt="<%= item.Title %>"
+                     style="width:100%;height:180px;object-fit:cover;">
+                <div class="item-info">
+                  <h3><%= item.Title %></h3>
+                  <span class="status reserved">Reserved</span>
+                  <p style="font-size:0.8rem;color:#666;">by <%= item.Donor.split('@')[0] %></p>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

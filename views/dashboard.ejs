@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | Swap Shop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+  <div class="container">
+    <h2 style="margin:2rem 0 1rem;"><%= category ? category.charAt(0).toUpperCase() + category.slice(1) : 'All Items' %></h2>
+    <div class="items-grid">
+      <% items.forEach(item => { %>
+        <div class="item-card" onclick="location.href='/item/<%= item.ID %>?user=<%= user.email %>'">
+          <img src="/uploads/<%= item.ImageFolder %>/<%= item.Images.split(',')[0] %>"
+               alt="<%= item.Title %>"
+               style="width:100%;height:180px;object-fit:cover;">
+          <div class="item-info">
+            <h3><%= item.Title %></h3>
+            <span class="status <%= item.Status.toLowerCase() %>"><%= item.Status %></span>
+            <% if (item.ReservedBy) { %>
+              <p style="font-size:0.8rem;color:#666;margin-top:0.5rem;">
+                Reserved by <%= item.ReservedBy.split('@')[0] %>
+              </p>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>
