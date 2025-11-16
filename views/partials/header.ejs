@@ -1,0 +1,54 @@
+<header>
+  <div class="container header-content">
+    <div class="logo">
+      <a href="/dashboard?user=<%= user?.email || '' %>">
+        <img src="/images/logo.png" 
+            alt="Swap Shop" 
+            class="logo-img"
+            onerror="this.style.display='none'">
+        <span>Swap Shop</span>
+      </a>
+    </div>
+    <% if (user) { %>
+      <div class="search-bar">
+        <form action="/dashboard" method="GET">
+          <input type="hidden" name="user" value="<%= user.email %>">
+          <input type="text" name="category" placeholder="Search by category..." list="categories">
+          <datalist id="categories">
+            <option value="textbooks">
+            <option value="furniture">
+            <option value="electronics">
+            <option value="clothing">
+            <option value="other">
+          </datalist>
+        </form>
+      </div>
+      <nav>
+        <a href="/donate?user=<%= user.email %>" class="<%= currentPage==='donate'?'active':'' %>">Donate</a>
+        <a href="/myitems?user=<%= user.email %>" class="<%= currentPage==='myitems'?'active':'' %>">My Items</a>
+      </nav>
+
+      <!-- PROFILE MENU -->
+      <div class="profile-menu">
+        <div class="profile-icon" onclick="toggleProfileMenu()">
+          <%= user.email.charAt(0).toUpperCase() %>
+        </div>
+        <div class="dropdown">
+          <a href="/logout">Logout</a>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</header>
+
+<script>
+  function toggleProfileMenu() {
+    document.querySelector('.profile-menu').classList.toggle('active');
+  }
+  document.addEventListener('click', (e) => {
+    const menu = document.querySelector('.profile-menu');
+    if (menu && !menu.contains(e.target)) {
+      menu.classList.remove('active');
+    }
+  });
+</script>

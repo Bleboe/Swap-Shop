@@ -1,0 +1,14 @@
+[
+  {
+    "email": "alice@lsu.edu",
+    "password": "alice123",
+    "name": "Alice Johnson",
+    "role": "student"
+  },
+  {
+    "email": "prof.bob@lsu.edu",
+    "password": "bob456",
+    "name": "Prof. Bob Smith",
+    "role": "faculty"
+  }
+]

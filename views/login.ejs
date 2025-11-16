@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Swap Shop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="login-container">
+      <h1>Campus Swap Shop</h1>
+      <p>Log in with your college email</p>
+      <% if (error) { %><p style="color:red;"><%= error %></p><% } %>
+      <form action="/login" method="POST">
+        <div class="form-group">
+          <input type="email" name="email" placeholder="you@college.edu" required />
+        </div>
+        <div class="form-group">
+          <input type="password" name="password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;">Login</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

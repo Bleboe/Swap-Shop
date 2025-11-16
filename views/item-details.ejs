@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= item.Title %> | Swap Shop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container" style="margin:1rem 0;">
+    <a href="/dashboard?user=<%= user.email %>" class="btn btn-secondary">
+      ← Back to Dashboard
+    </a>
+  </div>
+
+  <div class="container" style="padding:2rem 0;">
+    <div style="background:white;padding:2rem;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+      <h1><%= item.Title %></h1>
+      <p><strong>Category:</strong> <%= item.Category %> |
+         <strong>Condition:</strong> <%= item.Condition %></p>
+      <p><strong>Donor:</strong> <%= item.Donor.split('@')[0] %></p>
+
+      <div class="photo-gallery">
+        <% item.Images.split(',').forEach(img => { %>
+          <img src="/uploads/<%= item.ImageFolder %>/<%= img %>"
+               alt="Photo of <%= item.Title %>"
+               class="detail-photo">
+        <% }) %>
+      </div>
+
+      <p><strong>Description:</strong><br><%= item.Description %></p>
+
+      <div style="margin-top:2rem;padding-top:1rem;border-top:1px solid #eee;">
+        <p><strong>Status:</strong>
+          <span class="status <%= item.Status.toLowerCase() %>"><%= item.Status %></span>
+          <% if (item.ReservedBy) { %>
+            <br>Reserved by: <strong><%= item.ReservedBy.split('@')[0] %></strong>
+          <% } %>
+        </p>
+
+        <% if (item.Status === 'Available' && user.email !== item.Donor) { %>
+          <button class="btn btn-primary reserve-btn" data-item-id="<%= item.ID %>">
+            Reserve Item
+          </button>
+        <% } %>
+
+        <% if (user.email === item.Donor) { %>
+          <% if (item.Status === 'Available' || item.Status === 'Reserved') { %>
+            <button class="btn btn-success taken-btn" data-item-id="<%= item.ID %>">
+              Mark as Taken
+            </button>
+          <% } %>
+          <% if (item.Status === 'Reserved') { %>
+            <button class="btn btn-warning cancel-btn" data-item-id="<%= item.ID %>">
+              Cancel Reservation
+            </button>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.reserve-btn').forEach(b=>b.onclick=async()=>{
+        const id=b.dataset.itemId;
+        const r=await fetch('/api/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,user:'<%= user.email %>'})});
+        if((await r.json()).success) location.reload();
+      });
+      document.querySelectorAll('.taken-btn, .cancel-btn').forEach(b=>b.onclick=async()=>{
+        const id=b.dataset.itemId;
+        const status=b.classList.contains('taken-btn')?'Taken':'Available';
+        const r=await fetch('/api/update-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status,user:'<%= user.email %>'})});
+        if((await r.json()).success) location.reload();
+      });
+    });
+  </script>
+</body>
+</html>
