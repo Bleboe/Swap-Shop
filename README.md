@@ -35,6 +35,7 @@ A **secure, local web app** for students & faculty to **donate, reserve, and reu
 
 ### 2. **Unzip & Setup**
 ```bash
+download swap-shop.zip
 unzip swap-shop.zip
 cd swap-shop
 npm install //installs the required Tools and Packages using the json file 
