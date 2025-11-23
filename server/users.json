@@ -10,5 +10,11 @@
     "password": "bob456",
     "name": "Prof. Bob Smith",
     "role": "faculty"
+  },
+  {
+    "email": "admin.mike@lsu.edu",
+    "password": "mike",
+    "name": "Mike, the tiger",
+    "role": "admin"
   }
 ]

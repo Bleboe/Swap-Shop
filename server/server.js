@@ -1,5 +1,8 @@
 // server/server.js
 const express = require('express');
+
+const session = require('express-session');
+
 const multer = require('multer');
 const XLSX = require('xlsx');
 const path = require('path');
@@ -11,6 +14,12 @@ app.set('views', path.join(__dirname, '../views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+
+app.use(session({
+  secret: 'swapshop-secret-key',
+  resave: false,
+  saveUninitialized: false
+}));
 
 // === SERVE UPLOADED IMAGES ===
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -87,6 +96,7 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const user = USERS.find(u => u.email === email && u.password === password);
   if (user && email.endsWith('.edu')) {
+    req.session.user = user;
     res.redirect(`/dashboard?user=${encodeURIComponent(email)}`);
   } else {
     res.render('login', { error: 'Invalid .edu email or password' });
@@ -98,7 +108,7 @@ app.get('/dashboard', (req, res) => {
   const user = USERS.find(u => u.email === userEmail);
   if (!user) return res.redirect('/');
   const category = req.query.category;
-  let filtered = items;
+  let filtered = items.filter(i => i.Approved === true);
   if (category) filtered = items.filter(i => i.Category === category);
   res.render('dashboard', { user, items: filtered, currentPage: 'dashboard', category });
 });
@@ -114,10 +124,84 @@ app.get('/myitems', (req, res) => {
   const userEmail = req.query.user;
   const user = USERS.find(u => u.email === userEmail);
   if (!user) return res.redirect('/');
+
+  // Items the user donated
   const donated = items.filter(i => i.Donor === userEmail);
+
+  // Items the user reserved/claimed
   const reserved = items.filter(i => i.ReservedBy === userEmail);
-  res.render('myitems', { user, donated, reserved, currentPage: 'myitems' });
+
+  // Items the user submitted that are pending admin approval
+  const pending = items.filter(i => i.Donor === userEmail && i.Status === "pending");
+
+  // Items the user donated that have been approved and are visible to others
+  const approved = items.filter(i => i.Donor === userEmail && i.Status === "approved");
+
+  res.render('myitems', { 
+    user, 
+    donated,
+    reserved,
+    pending,
+    approved,
+    currentPage: 'myitems'
+  });
 });
+
+
+app.get('/admin', (req, res) => {
+  const userEmail = req.query.user;
+  const user = USERS.find(u => u.email === userEmail);
+
+  if (!user) return res.redirect('/');
+
+  if (user.role !== 'admin') {
+    return res.status(403).send("Access denied.");
+  }
+
+  const pending = items.filter(i => i.Approved === false);
+  const approved = items.filter(i => i.Approved === true);
+
+  res.render('admin', {
+    user,
+    pending,
+    approved,
+    currentPage: 'admin'
+  });
+});
+
+//aprove an item
+app.post('/admin/approve/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const item = items.find(i => i.ID === id);
+
+  if (item) {
+    item.Approved = true;
+    saveItems();
+  }
+
+  const userEmail = req.query.user || req.body.user;
+  res.redirect(`/admin?user=${userEmail}`);
+});
+
+// Reject an item
+app.post('/admin/delete/:id', (req, res) => {
+  const userEmail = req.query.user; // grab the admin email from the query
+  const user = USERS.find(u => u.email === userEmail);
+
+  // check if user exists and is admin
+  if (!user || user.role !== 'admin') return res.redirect('/');
+
+  const id = parseInt(req.params.id);
+  // remove the item from items
+  items = items.filter(i => i.ID !== id);
+  saveItems();
+
+  // redirect back to admin page so admin stays logged in
+  res.redirect(`/admin?user=${encodeURIComponent(userEmail)}`);
+});
+
+
+
 
 app.get('/item/:id', (req, res) => {
   const item = items.find(i => i.ID === parseInt(req.params.id));
@@ -173,7 +257,9 @@ app.post('/api/donate', upload.array('photos', 5), (req, res) => {
     Donor: donor,
     ReservedBy: null,
     Images: photos.join(','),
-    ImageFolder: newId.toString()
+    ImageFolder: newId.toString(),
+
+    Approved: false
   };
 
   items.push(newItem);
@@ -211,3 +297,5 @@ app.listen(3000, () => {
   console.log('Swap Shop Live: http://localhost:3000');
   console.log('Images: http://localhost:3000/uploads/ID/filename.jpg');
 });
+
+
