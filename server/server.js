@@ -89,7 +89,12 @@ app.post('/login', (req, res) => {
   if (user && email.endsWith('.edu')) {
     res.redirect(`/dashboard?user=${encodeURIComponent(email)}`);
   } else {
-    res.render('login', { error: 'Invalid .edu email or password' });
+    // If request is from API (e.g., Supertest), return JSON and 401
+    if (req.headers['accept'] && req.headers['accept'].includes('application/json')) {
+      res.status(401).json({ error: 'Invalid .edu email or password' });
+    } else {
+      res.render('login', { error: 'Invalid .edu email or password' });
+    }
   }
 });
 
@@ -207,7 +212,5 @@ app.post('/api/update-status', (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log('Swap Shop Live: http://localhost:3000');
-  console.log('Images: http://localhost:3000/uploads/ID/filename.jpg');
-});
+
+module.exports = app;
