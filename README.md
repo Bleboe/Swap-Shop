@@ -39,7 +39,7 @@ download swap-shop.zip
 unzip swap-shop.zip
 cd swap-shop
 npm install //installs the required Tools and Packages using the json file 
-node server/server.js
+node server/index.js
 ```
 ---
 
