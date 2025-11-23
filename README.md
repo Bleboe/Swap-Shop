@@ -45,7 +45,8 @@ node server/server.js
 
 ### Testing
 
-# Jest is popular all-in-one testing framework for Node.js, with the help of supertest it allows for easy and fast testing
+Jest is popular all-in-one testing framework for Node.js, with the help of supertest it allows for easy and fast testing
+it can be run using 'npm test (file location)'
 
 
 
