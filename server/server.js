@@ -151,8 +151,8 @@ app.get('/myitems', (req, res) => {
   // Items the user donated that have been approved and are visible to others
   const approved = items.filter(i => i.Donor === userEmail && i.Status === "approved");
 
-  res.render('myitems', { 
-    user, 
+  res.render('myitems', {
+    user,
     donated,
     reserved,
     pending,
@@ -201,7 +201,7 @@ app.post('/admin/approve/:id', (req, res) => {
 
 // Reject an item
 app.post('/admin/delete/:id', (req, res) => {
-  const userEmail = req.query.user; 
+  const userEmail = req.query.user;
   const user = USERS.find(u => u.email === userEmail);
 
   if (!user || user.role !== 'admin') return res.redirect('/');
@@ -228,7 +228,7 @@ app.get('/admin/reject/:id', (req, res) => {
 
   res.render('reject', {
     itemId,
-    item,   
+    item,
     user,
     currentPage: 'admin'
   });
@@ -255,7 +255,7 @@ app.post('/admin/reject/:id', (req, res) => {
       if (!owner.notifications) owner.notifications = [];
 
       owner.notifications.push({
-        id: Date.now(), 
+        id: Date.now(),
         type: "rejection",
         itemID: id,
         itemName: item.Title,
@@ -273,7 +273,7 @@ app.post('/admin/reject/:id', (req, res) => {
   const folderPath = path.join(__dirname, 'uploads', String(id));
   try {
     fs.rmSync(folderPath, { recursive: true, force: true });
-  } catch (err) {}
+  } catch (err) { }
 
   // SAVE USER CHANGES
   saveUsers();
@@ -293,11 +293,11 @@ app.get('/admin/item/:id', (req, res) => {
 
   if (!item) return res.status(404).send("Item not found");
 
-  res.render('item-details', { 
-    item, 
-    user, 
-    currentPage: 'admin', 
-    reviewMode: true    
+  res.render('item-details', {
+    item,
+    user,
+    currentPage: 'admin',
+    reviewMode: true
   });
 });
 
@@ -307,11 +307,11 @@ app.get('/item/:id', (req, res) => {
   const user = USERS.find(u => u.email === userEmail);
 
   if (item && user) {
-    res.render('item-details', { 
-      item, 
-      user, 
-      currentPage: '', 
-      reviewMode: false  
+    res.render('item-details', {
+      item,
+      user,
+      currentPage: '',
+      reviewMode: false
     });
   } else {
     res.status(404).send('Not found');
@@ -320,32 +320,32 @@ app.get('/item/:id', (req, res) => {
 
 
 app.get('/notifications', (req, res) => {
-    const userEmail = req.query.user;
-    const user = USERS.find(u => u.email === userEmail);
-    if (!user) return res.redirect('/');
+  const userEmail = req.query.user;
+  const user = USERS.find(u => u.email === userEmail);
+  if (!user) return res.redirect('/');
 
-    res.render('notifications', {
-        user,
-        currentPage: 'notifications'
-    });
+  res.render('notifications', {
+    user,
+    currentPage: 'notifications'
+  });
 });
 
 app.get('/notification/:id', (req, res) => {
-    const userEmail = req.query.user;
-    const user = USERS.find(u => u.email === userEmail);
+  const userEmail = req.query.user;
+  const user = USERS.find(u => u.email === userEmail);
 
-    if (!user) return res.redirect('/');
+  if (!user) return res.redirect('/');
 
-    const id = parseInt(req.params.id);
-    const notification = user.notifications.find(n => n.id === id);
+  const id = parseInt(req.params.id);
+  const notification = user.notifications.find(n => n.id === id);
 
-    if (!notification) return res.status(404).send("Notification not found");
+  if (!notification) return res.status(404).send("Notification not found");
 
-    res.render("notification-details", {
-        user,
-        notification,
-        currentPage: "notifications"
-    });
+  res.render("notification-details", {
+    user,
+    notification,
+    currentPage: "notifications"
+  });
 });
 
 
@@ -429,12 +429,5 @@ app.post('/api/update-status', (req, res) => {
     res.json({ success: false });
   }
 });
-
-app.listen(3000, () => {
-  console.log('Swap Shop Live: http://localhost:3000');
-  console.log('Images: http://localhost:3000/uploads/ID/filename.jpg');
-});
-
-
 
 module.exports = app;
