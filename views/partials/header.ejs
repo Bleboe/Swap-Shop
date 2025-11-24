@@ -26,6 +26,10 @@
       <nav>
         <a href="/donate?user=<%= user.email %>" class="<%= currentPage==='donate'?'active':'' %>">Donate</a>
         <a href="/myitems?user=<%= user.email %>" class="<%= currentPage==='myitems'?'active':'' %>">My Items</a>
+        
+        <% if (user.role === 'admin') { %>
+          <a href="/admin?user=<%= user.email %>" class="<%= currentPage==='admin'?'active':'' %>">Admin</a>
+        <% } %>
       </nav>
 
       <!-- PROFILE MENU -->
@@ -34,6 +38,7 @@
           <%= user.email.charAt(0).toUpperCase() %>
         </div>
         <div class="dropdown">
+          <a href="/notifications?user=<%= user.email %>">Notifications</a>
           <a href="/logout">Logout</a>
         </div>
       </div>

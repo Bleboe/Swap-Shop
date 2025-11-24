@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications | Swap Shop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
+  <div class="container" style="margin:1rem 0;">
+    <a href="/dashboard?user=<%= user.email %>" class="btn btn-secondary">
+        ← Back to Dashboard
+    </a>
+  </div>
+  <div class="container" style="max-width:1000px;margin:2rem auto;">
+    
+
+    <h2 style="margin-top: 2rem;">Your Notifications</h2>
+
+    <% if (user.notifications && user.notifications.length > 0) { %>
+      <ul class="notification-list">
+        <% user.notifications.forEach(n => { %>
+          <li class="notification-item <%= n.type === 'rejection' ? 'rejection' : '' %>">
+            <a href="/notification/<%= n.id %>?user=<%= user.email %>" class="notification-link">
+
+
+              <% if (n.type === "rejection") { %>
+                <strong>Item Rejected</strong>
+                <p>Your item "<%= n.itemName %>" was rejected for reason "<%= n.message %>".</p>
+              <% } else { %>
+                <strong><%= n.title %></strong>
+                <p><%= n.message %></p>
+              <% } %>
+
+              <small><%= new Date(n.date).toLocaleString() %></small>
+
+            </a>
+          </li>
+
+        <% }) %>
+
+
+      </ul>
+    <% } else { %>
+      <p>You have no notifications.</p>
+    <% } %>
+
+  </div>
+</body>
+</html>

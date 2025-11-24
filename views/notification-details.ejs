@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notification Details | Swap Shop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <%- include('partials/header', { user, currentPage: '' }) %>
+
+  <div class="container" style="margin:1rem 0;">
+    <a href="/notifications?user=<%= user.email %>" class="btn btn-secondary">
+        ← Back to Notifications
+    </a>
+  </div>
+
+  <div class="notification-details-container" style="max-width: 100%; margin: 2rem auto;">
+
+    <div class="notification-details <%= notification.type === 'rejection' ? 'rejection' : '' %>">
+        <h2>
+        <% if (notification.type === 'rejection') { %>
+            Item Rejected
+        <% } else { %>
+            <%= notification.title %>
+        <% } %>
+        </h2>
+
+        <div class="details-meta">
+        <span class="label">Date:</span>
+        <span class="value"><%= new Date(notification.date).toLocaleString() %></span>
+        </div>
+
+        <% if (notification.type === 'rejection') { %>
+        <p class="details-message">
+            Your item "<strong><%= notification.itemName %></strong>" was rejected
+            for reason "<strong><%= notification.message %></strong>".
+        </p>
+        <% } else { %>
+        <p class="details-message"><%= notification.message %></p>
+        <% } %>
+    </div>
+
+    </div>
+
+</body>
+</html>
