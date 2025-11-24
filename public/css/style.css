@@ -421,3 +421,143 @@ nav a.active {
     padding: 1.5rem;
   }
 }
+
+
+/* --------------------------------------------------
+   Notification Details  page
+   -------------------------------------------------- */
+
+.notification-details-container {
+  max-width: 1200px;
+  
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.notification-details {
+  height: calc(100vh - 12rem); 
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 1.5rem 1.75rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+
+
+.notification-details h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.details-meta {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.details-meta .label {
+  font-weight: bold;
+  color: #444;
+}
+
+.details-message {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+/* Rejection Type Detail Styling */
+.notification-details.rejection {
+  border-left: 5px solid #e63946;
+  background: #fff2f2;
+}
+
+.notification-details.rejection h2 {
+  color: #b30000;
+}
+
+.notification-details.rejection .details-message {
+  color: #7a0000;
+}
+
+.notification-fullscreen {
+  width: 100%;
+  min-height: 100vh;   /* full page height */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* pushes content down slightly */
+  padding-top: 50px;   /* pull it downward from the top */
+  background: #f5f5f5;
+}
+
+
+/* --------------------------------------------------
+   Notification Items
+   -------------------------------------------------- */
+/* Notification List Container */
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Each Notification Item */
+.notification-item {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+/* Hover effect like mail list */
+.notification-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  background: #f7f9fc;
+}
+
+/* Bold title */
+.notification-item strong {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Notification message text */
+.notification-item p {
+  margin: 0.25rem 0 0.5rem;
+  color: #555;
+}
+
+/* Date (small grey text) */
+.notification-item small {
+  display: block;
+  margin-top: 0.4rem;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+/* Special styling for rejection notifications */
+.notification-item.rejection {
+  border-left: 5px solid #e63946;
+  background: #fff5f5;
+}
+
+.notification-item.rejection strong {
+  color: #b30000;
+}
+
+.notification-item.rejection p {
+  color: #7a0000;
+}
+
+.notification-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+

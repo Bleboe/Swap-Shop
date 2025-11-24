@@ -38,7 +38,7 @@
           <%= user.email.charAt(0).toUpperCase() %>
         </div>
         <div class="dropdown">
-          <a href="/notifications">Notifications</a>
+          <a href="/notifications?user=<%= user.email %>">Notifications</a>
           <a href="/logout">Logout</a>
         </div>
       </div>

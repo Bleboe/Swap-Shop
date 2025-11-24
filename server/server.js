@@ -47,6 +47,15 @@ if (fs.existsSync(TEMP_DIR)) {
   });
 }
 
+//saves changes made to user.json
+function saveUsers() {
+  fs.writeFileSync(
+    path.join(__dirname, 'users.json'),
+    JSON.stringify(USERS, null, 2)
+  );
+}
+
+
 // === DATA ===
 let USERS = JSON.parse(fs.readFileSync('server/users.json'));
 let items = [];
@@ -187,7 +196,7 @@ app.post('/admin/approve/:id', (req, res) => {
 
 // Reject an item
 app.post('/admin/delete/:id', (req, res) => {
-  const userEmail = req.query.user; // grab the admin email from the query
+  const userEmail = req.query.user; 
   const user = USERS.find(u => u.email === userEmail);
 
   if (!user || user.role !== 'admin') return res.redirect('/');
@@ -214,45 +223,58 @@ app.get('/admin/reject/:id', (req, res) => {
 
   res.render('reject', {
     itemId,
-    item,   // <--- Pass the full item
+    item,   
     user,
     currentPage: 'admin'
   });
 });
 
-
-
-
 app.post('/admin/reject/:id', (req, res) => {
-  const userEmail = req.query.user;
-  const user = USERS.find(u => u.email === userEmail);
+  const adminEmail = req.query.user;
+  const adminUser = USERS.find(u => u.email === adminEmail);
 
-  if (!user || user.role !== 'admin') return res.redirect('/');
+  if (!adminUser || adminUser.role !== 'admin')
+    return res.redirect('/');
 
   const id = parseInt(req.params.id);
   const reason = req.body.reason;
 
+  const item = items.find(i => i.ID === id);
+  const ownerEmail = item ? item.Donor : null;
+
+  // Add notification to owner
+  if (ownerEmail) {
+    const owner = USERS.find(u => u.email === ownerEmail);
+
+    if (owner) {
+      if (!owner.notifications) owner.notifications = [];
+
+      owner.notifications.push({
+        id: Date.now(), 
+        type: "rejection",
+        itemID: id,
+        itemName: item.Title,
+        message: reason,
+        date: new Date().toISOString()
+      });
+    }
+  }
+
+  // Remove item
   items = items.filter(i => i.ID !== id);
   saveItems();
 
+  // Delete image folder
   const folderPath = path.join(__dirname, 'uploads', String(id));
   try {
-    if (fs.existsSync(folderPath)) {
-      fs.rmSync(folderPath, { recursive: true, force: true });
-      //console.log(`Deleted folder for item ${id}: ${folderPath}`);
-    } else {
-      //console.log(`Folder does not exist: ${folderPath}`);
-    }
-  } catch (err) {
-    //console.error('Error deleting folder:', err);
-  }
+    fs.rmSync(folderPath, { recursive: true, force: true });
+  } catch (err) {}
 
-  console.log(`ADMIN REJECTED item ${id}: ${reason}`);
-  res.redirect(`/admin?user=${encodeURIComponent(userEmail)}`);
+  // SAVE USER CHANGES
+  saveUsers();
+
+  res.redirect(`/admin?user=${encodeURIComponent(adminEmail)}`);
 });
-
-
-
 
 
 app.get('/admin/item/:id', (req, res) => {
@@ -284,12 +306,44 @@ app.get('/item/:id', (req, res) => {
       item, 
       user, 
       currentPage: '', 
-      reviewMode: false  // <-- add this
+      reviewMode: false  
     });
   } else {
     res.status(404).send('Not found');
   }
 });
+
+
+app.get('/notifications', (req, res) => {
+    const userEmail = req.query.user;
+    const user = USERS.find(u => u.email === userEmail);
+    if (!user) return res.redirect('/');
+
+    res.render('notifications', {
+        user,
+        currentPage: 'notifications'
+    });
+});
+
+app.get('/notification/:id', (req, res) => {
+    const userEmail = req.query.user;
+    const user = USERS.find(u => u.email === userEmail);
+
+    if (!user) return res.redirect('/');
+
+    const id = parseInt(req.params.id);
+    const notification = user.notifications.find(n => n.id === id);
+
+    if (!notification) return res.status(404).send("Notification not found");
+
+    res.render("notification-details", {
+        user,
+        notification,
+        currentPage: "notifications"
+    });
+});
+
+
 
 
 // === LOGOUT ===

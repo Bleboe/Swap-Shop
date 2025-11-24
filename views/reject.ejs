@@ -8,12 +8,15 @@
 </head>
 <body>
   <%- include('partials/header') %>
+  <div class="container" style="margin:1rem 0;">
+    <a href="/admin?user=<%= user.email %>" class="btn btn-secondary">
+        ← Back to Admin
+    </a>
+  </div>
 
   <div class="container" style="max-width:600px;margin:2rem auto;">
 
-    <a href="/admin?user=<%= user.email %>" class="btn btn-secondary">
-        ← Back to Admin
-      </a>
+    
     <h2 style="margin: 2rem 0 1rem;">Deny Item</h2>
 
     <!-- Display the item like on the dashboard -->
