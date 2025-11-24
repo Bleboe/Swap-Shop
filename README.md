@@ -39,4 +39,14 @@ download swap-shop.zip
 unzip swap-shop.zip
 cd swap-shop
 npm install //installs the required Tools and Packages using the json file 
-node server/server.js
+node server/index.js
+```
+---
+
+### Testing
+
+Jest is popular all-in-one testing framework for Node.js, with the help of supertest it allows for easy and fast testing
+it can be run using 'npm test (file location)'
+
+
+

@@ -108,7 +108,12 @@ app.post('/login', (req, res) => {
     req.session.user = user;
     res.redirect(`/dashboard?user=${encodeURIComponent(email)}`);
   } else {
-    res.render('login', { error: 'Invalid .edu email or password' });
+    // If request is from API (e.g., Supertest), return JSON and 401
+    if (req.headers['accept'] && req.headers['accept'].includes('application/json')) {
+      res.status(401).json({ error: 'Invalid .edu email or password' });
+    } else {
+      res.render('login', { error: 'Invalid .edu email or password' });
+    }
   }
 });
 
@@ -431,3 +436,5 @@ app.listen(3000, () => {
 });
 
 
+
+module.exports = app;
