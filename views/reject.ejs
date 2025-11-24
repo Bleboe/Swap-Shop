@@ -10,7 +10,11 @@
   <%- include('partials/header') %>
 
   <div class="container" style="max-width:600px;margin:2rem auto;">
-    <h2 style="margin: 2rem 0 1rem;">Reject Item</h2>
+
+    <a href="/admin?user=<%= user.email %>" class="btn btn-secondary">
+        ← Back to Admin
+      </a>
+    <h2 style="margin: 2rem 0 1rem;">Deny Item</h2>
 
     <!-- Display the item like on the dashboard -->
     <div class="items-grid">
