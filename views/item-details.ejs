@@ -10,9 +10,17 @@
   <%- include('partials/header') %>
 
   <div class="container" style="margin:1rem 0;">
-    <a href="/dashboard?user=<%= user.email %>" class="btn btn-secondary">
-      ← Back to Dashboard
-    </a>
+    <% if (!reviewMode) { %>
+      <a href="/dashboard?user=<%= user.email %>" class="btn btn-secondary">
+        ← Back to Dashboard
+      </a>
+    <% } %>
+
+    <% if (reviewMode) { %>
+      <a href="/admin?user=<%= user.email %>" class="btn btn-secondary">
+        ← Back to Admin
+      </a>
+    <% } %>
   </div>
 
   <div class="container" style="padding:2rem 0;">
@@ -40,24 +48,41 @@
           <% } %>
         </p>
 
-        <% if (item.Status === 'Available' && user.email !== item.Donor) { %>
-          <button class="btn btn-primary reserve-btn" data-item-id="<%= item.ID %>">
-            Reserve Item
-          </button>
+        <% if (!reviewMode) { %>
+          <!-- Existing user buttons for reserving/cancelling/taking items -->
+          <% if (item.Status === 'Available' && user.email !== item.Donor) { %>
+            <button class="btn btn-primary reserve-btn" data-item-id="<%= item.ID %>">
+              Reserve Item
+            </button>
+          <% } %>
+
+          <% if (user.email === item.Donor) { %>
+            <% if (item.Status === 'Available' || item.Status === 'Reserved') { %>
+              <button class="btn btn-success taken-btn" data-item-id="<%= item.ID %>">
+                Mark as Taken
+              </button>
+            <% } %>
+            <% if (item.Status === 'Reserved') { %>
+              <button class="btn btn-warning cancel-btn" data-item-id="<%= item.ID %>">
+                Cancel Reservation
+              </button>
+            <% } %>
+          <% } %>
         <% } %>
 
-        <% if (user.email === item.Donor) { %>
-          <% if (item.Status === 'Available' || item.Status === 'Reserved') { %>
-            <button class="btn btn-success taken-btn" data-item-id="<%= item.ID %>">
-              Mark as Taken
-            </button>
-          <% } %>
-          <% if (item.Status === 'Reserved') { %>
-            <button class="btn btn-warning cancel-btn" data-item-id="<%= item.ID %>">
-              Cancel Reservation
-            </button>
-          <% } %>
+        <% if (reviewMode) { %>
+          <!-- Admin Approve/Reject buttons -->
+          <form action="/admin/approve/<%= item.ID %>?user=<%= user.email %>" method="POST" style="display:inline-block; margin-right:10px;">
+            <button type="submit" class="btn btn-success btn-fixed">Approve</button>
+          </form>
+
+          <a href="/admin/reject/<%= item.ID %>?user=<%= user.email %>" class="btn btn-danger btn-fixed" style="display:inline-block; margin-right:10px;">
+            Reject
+          </a>
         <% } %>
+
+
+
       </div>
     </div>
   </div>

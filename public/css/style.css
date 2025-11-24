@@ -246,8 +246,30 @@ nav a.active {
 .btn-warning   { background: #ffd700; color: #1a1a1a; }
 .btn-warning:hover { background: #e6c200; }
 
+.btn-danger   { background: #d10000; color: white; }
+.btn-danger:hover { background: #c80000; }
+
 .btn-secondary { background: #666; color: white; }
 .btn-secondary:hover { background: #555; }
+
+
+/* --------------------------------------------------
+   Admin button size setter
+   -------------------------------------------------- */
+
+.btn-fixed {
+  width: 120px;      /* same width for both */
+  height: 40px;      /* same height */
+  line-height: 40px; /* vertically center text */
+  text-align: center;
+  padding: 0 12px;   /* horizontal padding */
+  border-radius: 6px;
+  font-size: 16px;
+  display: inline-block;
+  text-decoration: none; /* for <a> */
+}
+
+
 
 /* --------------------------------------------------
    FORMS

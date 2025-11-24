@@ -164,6 +164,7 @@ app.get('/admin', (req, res) => {
   res.render('admin', {
     user,
     pending,
+    items,
     approved,
     currentPage: 'admin'
   });
@@ -176,6 +177,7 @@ app.post('/admin/approve/:id', (req, res) => {
 
   if (item) {
     item.Approved = true;
+    item.Status = "Available";
     saveItems();
   }
 
@@ -188,31 +190,107 @@ app.post('/admin/delete/:id', (req, res) => {
   const userEmail = req.query.user; // grab the admin email from the query
   const user = USERS.find(u => u.email === userEmail);
 
-  // check if user exists and is admin
   if (!user || user.role !== 'admin') return res.redirect('/');
 
   const id = parseInt(req.params.id);
-  // remove the item from items
   items = items.filter(i => i.ID !== id);
   saveItems();
 
-  // redirect back to admin page so admin stays logged in
+  res.redirect(`/admin?user=${encodeURIComponent(userEmail)}`);
+});
+
+app.get('/admin/reject/:id', (req, res) => {
+  const userEmail = req.query.user;
+  const user = USERS.find(u => u.email === userEmail);
+
+  if (!user || user.role !== 'admin') return res.redirect('/');
+
+  const itemId = parseInt(req.params.id);
+  const item = items.find(i => i.ID === itemId);
+
+  if (!item) {
+    return res.redirect(`/admin?user=${encodeURIComponent(userEmail)}`);
+  }
+
+  res.render('reject', {
+    itemId,
+    item,   // <--- Pass the full item
+    user,
+    currentPage: 'admin'
+  });
+});
+
+
+
+
+app.post('/admin/reject/:id', (req, res) => {
+  const userEmail = req.query.user;
+  const user = USERS.find(u => u.email === userEmail);
+
+  if (!user || user.role !== 'admin') return res.redirect('/');
+
+  const id = parseInt(req.params.id);
+  const reason = req.body.reason;
+
+  items = items.filter(i => i.ID !== id);
+  saveItems();
+
+  const folderPath = path.join(__dirname, 'uploads', String(id));
+  try {
+    if (fs.existsSync(folderPath)) {
+      fs.rmSync(folderPath, { recursive: true, force: true });
+      //console.log(`Deleted folder for item ${id}: ${folderPath}`);
+    } else {
+      //console.log(`Folder does not exist: ${folderPath}`);
+    }
+  } catch (err) {
+    //console.error('Error deleting folder:', err);
+  }
+
+  console.log(`ADMIN REJECTED item ${id}: ${reason}`);
   res.redirect(`/admin?user=${encodeURIComponent(userEmail)}`);
 });
 
 
 
 
+
+app.get('/admin/item/:id', (req, res) => {
+  const userEmail = req.query.user;
+  const user = USERS.find(u => u.email === userEmail);
+
+  if (!user || user.role !== 'admin') return res.redirect('/');
+
+  const itemId = parseInt(req.params.id);
+  const item = items.find(i => i.ID === itemId);
+
+  if (!item) return res.status(404).send("Item not found");
+
+  res.render('item-details', { 
+    item, 
+    user, 
+    currentPage: 'admin', 
+    reviewMode: true    
+  });
+});
+
 app.get('/item/:id', (req, res) => {
   const item = items.find(i => i.ID === parseInt(req.params.id));
   const userEmail = req.query.user;
   const user = USERS.find(u => u.email === userEmail);
+
   if (item && user) {
-    res.render('item-details', { item, user, currentPage: '' });
+    res.render('item-details', { 
+      item, 
+      user, 
+      currentPage: '', 
+      reviewMode: false  // <-- add this
+    });
   } else {
     res.status(404).send('Not found');
   }
 });
+
 
 // === LOGOUT ===
 app.get('/logout', (req, res) => {
@@ -253,7 +331,7 @@ app.post('/api/donate', upload.array('photos', 5), (req, res) => {
     Description: description,
     Category: category,
     Condition: condition,
-    Status: 'Available',
+    Status: 'Pending Aproval',
     Donor: donor,
     ReservedBy: null,
     Images: photos.join(','),
