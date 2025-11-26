@@ -3,12 +3,30 @@
     "email": "alice@lsu.edu",
     "password": "alice123",
     "name": "Alice Johnson",
-    "role": "student"
+    "role": "student",
+    "notifications": [
+      {
+        "id": 1764019590493,
+        "type": "rejection",
+        "itemID": 8,
+        "itemName": "Test item",
+        "message": "Test items are not allowed",
+        "date": "2025-11-24T21:26:30.493Z"
+      }
+    ]
   },
   {
     "email": "prof.bob@lsu.edu",
     "password": "bob456",
     "name": "Prof. Bob Smith",
-    "role": "faculty"
+    "role": "faculty",
+    "notifications": []
+  },
+  {
+    "email": "admin.mike@lsu.edu",
+    "password": "mike",
+    "name": "Mike, the tiger",
+    "role": "admin",
+    "notifications": []
   }
 ]
