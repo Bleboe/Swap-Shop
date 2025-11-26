@@ -1,100 +1,140 @@
-/**
- * System Tests for Swap-Shop
- * This test should test adding items, loading the home page, and reserve an item
- * and return exeptions if any issues.
- *
- *
- * 
- */
+const request = require('supertest');
+const app = require('../server');
 
-const request = require("supertest");
-const fs = require("fs");
-const path = require("path");
+describe('System Test: Full Swap-Shop Workflow', () => {
+    let aliceItemId;
+    let carlosItemId;
 
+    // AUTHENTICATION
+    describe('User Authentication', () => {
+        it('should login with correct .edu credentials', async () => {
+            const res = await request(app)
+                .post('/login')
+                .set('Accept', 'application/json')
+                .send({ email: 'alice@lsu.edu', password: 'alice123' });
+            expect(res.statusCode).toBe(302);
+        });
 
-const app = require("../app");   
+        it('should reject login with incorrect password', async () => {
+            const res = await request(app)
+                .post('/login')
+                .set('Accept', 'application/json')
+                .send({ email: 'alice@lsu.edu', password: 'wrongpassword' });
+            expect(res.statusCode).toBe(401);
+        });
 
-
-const ITEMS_FILE = path.join(__dirname, "..", "items.xlsx");
-
-function resetItemsFile() {
-    if (fs.existsSync(ITEMS_FILE)) fs.unlinkSync(ITEMS_FILE);
-}
-
-describe("Swap-Shop System Tests", () => {
-
-    beforeEach(() => {
-        resetItemsFile();
+        it('should reject non-.edu email login', async () => {
+            const res = await request(app)
+                .post('/login')
+                .set('Accept', 'application/json')
+                .send({ email: 'hacker@gmail.com', password: 'password123' });
+            expect(res.statusCode).toBe(401);
+        });
     });
 
-    test("Home page loads successfully", async () => {
-        const res = await request(app).get("/");
-        expect(res.statusCode).toBe(200);
-        expect(res.text).toContain("Swap Shop"); 
+    // DONATION
+    describe('Item Donation', () => {
+        it('alice should donate an item', async () => {
+            const res = await request(app)
+                .post('/api/donate')
+                .set('Accept', 'application/json')
+                .field('title', 'Calculus Textbook')
+                .field('description', 'Advanced Calculus - hardcover')
+                .field('category', 'Books')
+                .field('condition', 'Excellent')
+                .field('donor', 'alice@lsu.edu');
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.item).toHaveProperty('Status', 'Pending Aproval');
+            aliceItemId = res.body.item.ID;
+        });
+
+        it('should reject donation with missing fields', async () => {
+            const res = await request(app)
+                .post('/api/donate')
+                .set('Accept', 'application/json')
+                .field('title', 'Incomplete Item')
+                .field('donor', 'alice@lsu.edu');
+
+            expect(res.statusCode).toBe(400);
+        });
     });
 
-    test("Can submit a donated item", async () => {
-        const res = await request(app)
-            .post("/submit-item")
-            .field("title", "Desk Lamp")
-            .field("description", "Bright lamp for office")
-            .field("condition", "Good")
-            .attach("image", path.join(__dirname, "fixtures", "test.jpg"));
+    // ADMIN APPROVAL
+    describe('Admin Approval', () => {
+        it('admin should approve item', async () => {
+            const res = await request(app)
+                .post(`/admin/approve/${aliceItemId}?user=admin.mike@lsu.edu`)
+                .set('Accept', 'application/json');
+            expect([200, 302]).toContain(res.statusCode);
+        });
 
-    
-        expect(res.statusCode).toBe(302);
-
-        
-        expect(fs.existsSync(ITEMS_FILE)).toBe(true);
+        it('non-admin cannot approve items', async () => {
+            const res = await request(app)
+                .post(`/admin/approve/1?user=alice@lsu.edu`)
+                .set('Accept', 'application/json');
+            expect(res.statusCode).toBe(302);
+        });
     });
 
-    test("Submitted item appears in /items list", async () => {
-      
-        await request(app)
-            .post("/submit-item")
-            .field("title", "Office Chair")
-            .field("description", "Black mesh chair")
-            .field("condition", "Fair")
-            .attach("image", path.join(__dirname, "fixtures", "test.jpg"));
+    // RESERVATION 
+    describe('Item Reservation', () => {
+        it('user can reserve approved item', async () => {
+            const res = await request(app)
+                .post('/api/reserve')
+                .set('Accept', 'application/json')
+                .send({ id: aliceItemId, user: 'carlos@lsu.edu' });
 
-      
-        const res = await request(app).get("/items");
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toHaveProperty('success', true);
+        });
 
-        expect(res.statusCode).toBe(200);
-        expect(res.text).toContain("Office Chair");
+        it('cannot reserve already reserved item', async () => {
+            const res = await request(app)
+                .post('/api/reserve')
+                .set('Accept', 'application/json')
+                .send({ id: aliceItemId, user: 'sarah@lsu.edu' });
+
+            expect(res.body.success).toBe(false);
+        });
     });
 
-    test("User can reserve an item", async () => {
-       
-        await request(app)
-            .post("/submit-item")
-            .field("title", "Coffee Table")
-            .field("description", "Wooden table")
-            .field("condition", "Excellent")
-            .attach("image", path.join(__dirname, "fixtures", "test.jpg"));
+    // STATUS UPDATES 
+    describe('Item Status Management', () => {
+        it('donor can mark item as taken', async () => {
+            const res = await request(app)
+                .post('/api/update-status')
+                .set('Accept', 'application/json')
+                .send({ id: aliceItemId, status: 'Taken', user: 'alice@lsu.edu' });
 
-     
-        const list = await request(app).get("/items");
-        const match = list.text.match(/data-id="(\d+)"/);  
-        const itemId = match ? match[1] : null;
+            expect(res.statusCode).toBe(200);
+            expect(res.body.success).toBe(true);
+        });
 
-        expect(itemId).not.toBeNull();
+        it('non-donor cannot update item status', async () => {
+            const res = await request(app)
+                .post('/api/update-status')
+                .set('Accept', 'application/json')
+                .send({ id: aliceItemId, status: 'Available', user: 'carlos@lsu.edu' });
 
-    
-        const res = await request(app)
-            .post("/reserve-item")
-            .send({ itemId });
-
-    
-        expect(res.statusCode).toBe(302);
+            expect(res.body.success).toBe(false);
+        });
     });
 
-    test("Reserving non-existent item returns error message", async () => {
-        const res = await request(app)
-            .post("/reserve-item")
-            .send({ itemId: "999999" });
+    // ACCESS CONTROL 
+    describe('Access Control', () => {
+        it('admin can access admin page', async () => {
+            const res = await request(app)
+                .get('/admin?user=admin.mike@lsu.edu')
+                .set('Accept', 'application/json');
+            expect(res.statusCode).toBe(200);
+        });
 
-        expect(res.statusCode).toBe(400);
-        expect(res.text).toContain("Item not found");
+        it('student cannot access admin page', async () => {
+            const res = await request(app)
+                .get('/admin?user=alice@lsu.edu')
+                .set('Accept', 'application/json');
+            expect(res.statusCode).not.toBe(200);
+        });
     });
 });

@@ -21,19 +21,19 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// === SERVE UPLOADED IMAGES ===
+// SERVE UPLOADED IMAGES
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// === TEMP UPLOAD DIR ===
+// TEMP UPLOAD DIR
 const TEMP_DIR = path.join(__dirname, 'temp_uploads');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR);
 
-// === MULTER: Save to temp first ===
+// MULTER: Save to temp first
 const upload = multer({
   dest: TEMP_DIR
 });
 
-// === CLEAN OLD TEMP FOLDERS ON STARTUP ===
+// CLEAN OLD TEMP FOLDERS ON STARTUP
 if (fs.existsSync(TEMP_DIR)) {
   fs.readdirSync(TEMP_DIR).forEach(file => {
     const filePath = path.join(TEMP_DIR, file);
@@ -56,7 +56,7 @@ function saveUsers() {
 }
 
 
-// === DATA ===
+// DATA
 let USERS = JSON.parse(fs.readFileSync('server/users.json'));
 let items = [];
 const EXCEL_FILE = 'server/items.xlsx';
@@ -89,7 +89,7 @@ function saveItems() {
 
 loadItems();
 
-// === AUTO-CREATE IMAGE FOLDERS FROM EXCEL ===
+// AUTO-CREATE IMAGE FOLDERS FROM EXCEL
 items.forEach(item => {
   const folder = path.join(__dirname, 'uploads', String(item.ImageFolder));
   if (!fs.existsSync(folder)) {
@@ -98,7 +98,7 @@ items.forEach(item => {
   }
 });
 
-// === ROUTES ===
+// ROUTES 
 app.get('/', (req, res) => res.render('login', { error: null }));
 
 app.post('/login', (req, res) => {
@@ -184,7 +184,7 @@ app.get('/admin', (req, res) => {
   });
 });
 
-//aprove an item
+// aprove an item
 app.post('/admin/approve/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const item = items.find(i => i.ID === id);
@@ -351,12 +351,12 @@ app.get('/notification/:id', (req, res) => {
 
 
 
-// === LOGOUT ===
+// LOGOUT 
 app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-// === DONATE API: MOVE FILES FROM TEMP TO FINAL FOLDER ===
+// DONATE API: MOVE FILES FROM TEMP TO FINAL FOLDER 
 app.post('/api/donate', upload.array('photos', 5), (req, res) => {
   const { title, description, category, condition, donor } = req.body;
 

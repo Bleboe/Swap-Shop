@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../server'); // Adjust if your server exports differently
+const app = require('../server');
 
 describe('POST /login', () => {
     it('should fail with incorrect email', async () => {
