@@ -360,6 +360,11 @@ app.get('/logout', (req, res) => {
 app.post('/api/donate', upload.array('photos', 5), (req, res) => {
   const { title, description, category, condition, donor } = req.body;
 
+  // Validate required fields
+  if (!title || !description || !category || !condition || !donor) {
+    return res.status(400).json({ success: false, error: 'Missing required fields' });
+  }
+
   const newId = Math.max(...items.map(i => i.ID), 0) + 1;
   const finalDir = path.join(__dirname, 'uploads', newId.toString());
   fs.mkdirSync(finalDir, { recursive: true });

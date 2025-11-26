@@ -16,16 +16,37 @@
     ]
   },
   {
-    "email": "prof.bob@lsu.edu",
-    "password": "bob456",
-    "name": "Prof. Bob Smith",
-    "role": "faculty",
+    "email": "carlos@lsu.edu",
+    "password": "carlos123",
+    "name": "Carlos Garcia",
+    "role": "student",
+    "notifications": []
+  },
+  {
+    "email": "sarah@lsu.edu",
+    "password": "sarah123",
+    "name": "Sarah Mitchell",
+    "role": "student",
+    "notifications": []
+  },
+  {
+    "email": "james@lsu.edu",
+    "password": "james123",
+    "name": "James Wilson",
+    "role": "student",
     "notifications": []
   },
   {
     "email": "admin.mike@lsu.edu",
     "password": "mike",
     "name": "Mike, the tiger",
+    "role": "admin",
+    "notifications": []
+  },
+  {
+    "email": "admin.Ben@lsu.edu",
+    "password": "admin123",
+    "name": "Ben LeBoeuf",
     "role": "admin",
     "notifications": []
   }
